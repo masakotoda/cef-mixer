@@ -10,7 +10,7 @@ mkdir "%BASE_DIR%\build"
 cd "%BASE_DIR%\build"
 
 rem use "Visual Studio 15" as the generator for x86 builds
-rem cmake -G "Visual Studio 15" "%BASE_DIR%"
-cmake -G "Visual Studio 15 Win64" "%BASE_DIR%"
+cmake -G "Visual Studio 15" "%BASE_DIR%"
+rem cmake -G "Visual Studio 15 Win64" "%BASE_DIR%"
 
 cd %BASE_DIR%

@@ -21,6 +21,12 @@
 
 using namespace std;
 
+extern bool show_devtools_;
+class DevToolsCefClient : public CefClient
+{
+	IMPLEMENT_REFCOUNTING(DevToolsCefClient);
+};
+
 //
 // helper function to convert a 
 // CefDictionaryValue to a CefV8Object
@@ -563,6 +569,28 @@ public:
 		}
 	}
 
+	void show_devtools()
+	{
+		decltype(browser_) browser;
+		{
+			lock_guard<mutex> guard(lock_);
+			browser = browser_;
+		}
+
+		if (browser)
+		{
+			CefWindowInfo windowInfo;
+			windowInfo.SetAsPopup(nullptr, "Developer Tools");
+			windowInfo.style = WS_VISIBLE | WS_OVERLAPPEDWINDOW;
+			windowInfo.x = 0;
+			windowInfo.y = 0;
+			windowInfo.width = 640;
+			windowInfo.height = 480;
+
+			browser->GetHost()->ShowDevTools(windowInfo, new DevToolsCefClient(), CefBrowserSettings(), { 0, 0 });
+		}
+	}
+
 	void dump_source(CefRefPtr<CefFrame> frame)
 	{
 		if (frame.get() && !name_.empty())
@@ -625,6 +653,11 @@ public:
 
 			if (view_)
 			{
+				if (show_devtools_)
+				{
+					view_->show_devtools();
+					show_devtools_ = false;
+				}
 				view_->resize(width, height);
 				view_->tick(comp, t);
 			}

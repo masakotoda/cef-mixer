@@ -25,6 +25,7 @@ LRESULT CALLBACK wnd_proc(HWND, UINT, WPARAM, LPARAM);
 
 int sync_interval_ = 1;
 bool resize_ = false;
+bool show_devtools_ = false;
 
 //
 // simple RIAA for CoInitialize/CoUninitialize
@@ -371,6 +372,13 @@ LRESULT CALLBACK wnd_proc(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam)
 		case WM_SIZE: 
 			// signal that we want a resize of output
 			resize_ = true;
+			break;
+
+		case WM_CHAR:
+			if (wparam == 'd')
+			{
+				show_devtools_ = true;
+			}
 			break;
 
 		case WM_DESTROY:
