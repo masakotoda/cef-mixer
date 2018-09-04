@@ -335,7 +335,8 @@ private:
 class HtmlView : public CefClient,
 	public CefRenderHandler,
 	public CefLifeSpanHandler,
-	public CefLoadHandler
+	public CefLoadHandler,
+	public CefRequestHandler
 {
 public:
 	HtmlView(
@@ -386,6 +387,10 @@ public:
 	}
 
 	CefRefPtr<CefLoadHandler> GetLoadHandler() override {
+		return this;
+	}
+
+	CefRefPtr<CefRequestHandler> GetRequestHandler() override {
 		return this;
 	}
 
@@ -475,7 +480,7 @@ public:
 		CefRefPtr<CefFrame> frame,
 		const CefString& target_url,
 		const CefString& target_frame_name,
-		WindowOpenDisposition target_disposition,
+		CefLifeSpanHandler::WindowOpenDisposition target_disposition,
 		bool user_gesture,
 		const CefPopupFeatures& popupFeatures,
 		CefWindowInfo& windowInfo,
@@ -599,6 +604,12 @@ public:
 			CefRefPtr<CefStringVisitor> writer(new HtmlSourceWriter(filename));
 			frame->GetSource(writer);
 		}
+	}
+
+	virtual void OnRenderProcessTerminated(CefRefPtr<CefBrowser> browser,
+		TerminationStatus status) override
+	{
+		browser->Reload();
 	}
 
 private:
